@@ -27,6 +27,7 @@ public class UserController {
 	}
 
 	@PostMapping("/user")
+	@CrossOrigin
 	public ResponseEntity<String> addUser(@RequestBody User user) {
 		if(userService.addUser(user)){
 			return new ResponseEntity<String>("Success", HttpStatus.OK);
