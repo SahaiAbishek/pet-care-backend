@@ -7,5 +7,8 @@ import com.app.pet.care.entity.UserEntity;
 
 @Repository
 public interface UserRepo extends CrudRepository<UserEntity, Long> {
+
 	UserEntity findByEmailAndPassword(String email, String password);
+
+	UserEntity findByEmail(String email);
 }
