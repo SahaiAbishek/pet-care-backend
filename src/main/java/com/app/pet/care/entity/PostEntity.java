@@ -1,5 +1,7 @@
 package com.app.pet.care.entity;
 
+import java.util.Date;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,6 +25,16 @@ public class PostEntity {
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "USER_ID")
 	private UserEntity user;
+	@Column(name = "CREATED_AT")
+	private Date createdAt;
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
 
 	public int getPostId() {
 		return postId;

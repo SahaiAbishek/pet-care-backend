@@ -11,4 +11,6 @@ public interface UserRepo extends CrudRepository<UserEntity, Long> {
 	UserEntity findByEmailAndPassword(String email, String password);
 
 	UserEntity findByEmail(String email);
+	
+	UserEntity findByUserIdOrderByPostsCreatedAt(long id);
 }

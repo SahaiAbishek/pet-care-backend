@@ -8,6 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -27,6 +30,13 @@ public class UserEntity {
 	private Set<PetEntity> pets;
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private Set<PostEntity> posts;
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "USER_RELATION", joinColumns = {
+			@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID") }, inverseJoinColumns = {
+					@JoinColumn(name = "RELATION_ID", referencedColumnName = "USER_ID") })
+	private Set<UserEntity> contacts;
+	@ManyToMany(mappedBy = "contacts")
+	private Set<UserEntity> users;
 
 	public Set<PostEntity> getPosts() {
 		return posts;
@@ -66,6 +76,28 @@ public class UserEntity {
 
 	public void setPets(Set<PetEntity> pets) {
 		this.pets = pets;
+	}
+
+	public Set<UserEntity> getUsers() {
+		return users;
+	}
+
+	public void setUsers(Set<UserEntity> users) {
+		this.users = users;
+	}
+
+	public Set<UserEntity> getContacts() {
+		return contacts;
+	}
+
+	public void setContacts(Set<UserEntity> contacts) {
+		this.contacts = contacts;
+	}
+
+	@Override
+	public String toString() {
+		return "UserEntity [userId=" + userId + ", email=" + email + ", password=" + password + ", pets=" + pets
+				+ ", posts=" + posts + ", users=" + users + ", contacts=" + contacts + "]";
 	}
 
 }
