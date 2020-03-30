@@ -18,8 +18,8 @@ public class UserTimelineRepo {
 
 	@Transactional
 	public List<UserTimeline> findAllUsers(long userId) {
-		String sql = "SELECT U.USER_ID,U.EMAIL,P.POST_ID,P.POST_TEXT,P.CREATED_AT "
-				+ "FROM USER U,USER_RELATION UR,POST P "
+		String sql = "SELECT U.USER_ID,U.EMAIL,U.FIRST_NAME,P.POST_ID,P.POST_TEXT,P.CREATED_AT "
+				+ "FROM APP_USER U,USER_RELATION UR,POST P "
 				+ "WHERE U.USER_ID = UR.RELATION_ID AND P.USER_ID = UR.RELATION_ID AND UR.USER_ID = ? ORDER BY P.CREATED_AT DESC";
 		List<UserTimeline> userTimeline = jdbcTemplate.query(sql, new Object[] { userId }, new TimelineRowMapper());
 		return userTimeline;

@@ -1,5 +1,7 @@
 package com.app.pet.care.dao;
 
+import java.util.List;
+
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +15,6 @@ public interface UserRepo extends CrudRepository<UserEntity, Long> {
 	UserEntity findByEmail(String email);
 	
 	UserEntity findByUserIdOrderByPostsCreatedAt(long id);
+	
+	List<UserEntity> findAllByZip(String zip);
 }

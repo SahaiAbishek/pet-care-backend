@@ -1,6 +1,8 @@
 package com.app.pet.care.service;
 
+import java.sql.Timestamp;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.BeanUtils;
@@ -35,5 +37,23 @@ public class PostService {
 		} else {
 			throw new Exception("No such user : " + userName);
 		}
+	}
+
+	public boolean addPost(Post post, long userId) throws Exception {
+		Optional<UserEntity> optionalUserEntity = userRepo.findById(userId);
+		if (null != optionalUserEntity) {
+			UserEntity userEntity = optionalUserEntity.get();
+			PostEntity postEntity = new PostEntity();
+			postEntity.setText(post.getText());
+			postEntity.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+			postEntity.setUser(userEntity);
+			Set<PostEntity> posts = new HashSet<>();
+			posts.add(postEntity);
+			userEntity.setPosts(posts);
+			if (null != userRepo.save(userEntity)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

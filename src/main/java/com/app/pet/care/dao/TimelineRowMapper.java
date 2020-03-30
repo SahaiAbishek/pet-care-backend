@@ -14,8 +14,9 @@ public class TimelineRowMapper implements RowMapper<UserTimeline> {
 	public UserTimeline mapRow(ResultSet rs, int nowNum) throws SQLException {
 		UserTimeline timeline = new UserTimeline();
 		User user = new User();
-		user.setId(rs.getLong("USER_ID"));
+		user.setUserId(rs.getLong("USER_ID"));
 		user.setEmail(rs.getString("EMAIL"));
+		user.setFirstName(rs.getString("FIRST_NAME"));
 		timeline.setUser(user);
 		timeline.setPostId(rs.getLong("POST_ID"));
 		timeline.setPostText(rs.getString("POST_TEXT"));

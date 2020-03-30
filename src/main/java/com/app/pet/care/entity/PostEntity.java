@@ -1,6 +1,6 @@
 package com.app.pet.care.entity;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -26,13 +26,13 @@ public class PostEntity {
 	@JoinColumn(name = "USER_ID")
 	private UserEntity user;
 	@Column(name = "CREATED_AT")
-	private Date createdAt;
+	private Timestamp createdAt;
 
-	public Date getCreatedAt() {
+	public Timestamp getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(Date createdAt) {
+	public void setCreatedAt(Timestamp createdAt) {
 		this.createdAt = createdAt;
 	}
 

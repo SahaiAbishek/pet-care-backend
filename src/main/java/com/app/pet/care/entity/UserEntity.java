@@ -15,7 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "USER")
+@Table(name = "APP_USER")
 public class UserEntity {
 
 	@Id
@@ -26,6 +26,14 @@ public class UserEntity {
 	private String email;
 	@Column(name = "PASSWORD")
 	private String password;
+	@Column(name = "FIRST_NAME")
+	private String firstName;
+	@Column(name = "MIDDLE_NAME")
+	private String middleName;
+	@Column(name = "LAST_NAME")
+	private String lastName;
+	@Column(name = "ZIP")
+	private String zip;
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private Set<PetEntity> pets;
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
@@ -92,6 +100,38 @@ public class UserEntity {
 
 	public void setContacts(Set<UserEntity> contacts) {
 		this.contacts = contacts;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getMiddleName() {
+		return middleName;
+	}
+
+	public void setMiddleName(String middleName) {
+		this.middleName = middleName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getZip() {
+		return zip;
+	}
+
+	public void setZip(String zip) {
+		this.zip = zip;
 	}
 
 	@Override
