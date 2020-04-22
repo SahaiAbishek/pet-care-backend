@@ -1,8 +1,8 @@
-insert into APP_USER values (1,'abhi@test.com','test123');
-insert into APP_USER values (2,'Abdul@test.com','test123');
-insert into APP_USER values (3,'Raghav@test.com','test123');
-insert into APP_USER values (4,'Binod@test.com','test123');
-insert into APP_USER values (5,'Test@test.com','test123');
+insert into APP_USER values (1,'abhi@test.com','test123','Abi','Abhi',null,null);
+insert into APP_USER values (2,'Abdul@test.com','test123','Abdul','Abdul',null,null);
+insert into APP_USER values (3,'Raghav@test.com','test123','Raghav','Raghav',null,null);
+insert into APP_USER values (4,'Binod@test.com','test123','Binod','Binod',null,null);
+insert into APP_USER values (5,'Test@test.com','test123','Test','Test',null,null);
 
 insert into PET values (1,'DOG','HUSKY','TEST_HUSKY','any comments about your pet, likes dislikes etc',1);
 insert into PET values (2,'CAT','DONO','TEST_CAT','any comments about your pet, likes dislikes etc',1);

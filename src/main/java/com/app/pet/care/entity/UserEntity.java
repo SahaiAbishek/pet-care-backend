@@ -34,8 +34,12 @@ public class UserEntity {
 	private String lastName;
 	@Column(name = "ZIP")
 	private String zip;
+	@Column(name = "PROFILE_PIC_STORAGE_LOCATION")
+	private String profilePicStorageLocation;
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private Set<PetEntity> pets;
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private Set<PictureEntity> pictures;
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private Set<PostEntity> posts;
 	@ManyToMany(cascade = CascadeType.ALL)
@@ -45,6 +49,14 @@ public class UserEntity {
 	private Set<UserEntity> contacts;
 	@ManyToMany(mappedBy = "contacts")
 	private Set<UserEntity> users;
+
+	public String getProfilePicStorageLocation() {
+		return profilePicStorageLocation;
+	}
+
+	public void setProfilePicStorageLocation(String profilePicStorageLocation) {
+		this.profilePicStorageLocation = profilePicStorageLocation;
+	}
 
 	public Set<PostEntity> getPosts() {
 		return posts;
@@ -134,10 +146,20 @@ public class UserEntity {
 		this.zip = zip;
 	}
 
+	public Set<PictureEntity> getPictures() {
+		return pictures;
+	}
+
+	public void setPictures(Set<PictureEntity> pictures) {
+		this.pictures = pictures;
+	}
+
 	@Override
 	public String toString() {
-		return "UserEntity [userId=" + userId + ", email=" + email + ", password=" + password + ", pets=" + pets
-				+ ", posts=" + posts + ", users=" + users + ", contacts=" + contacts + "]";
+		return "UserEntity [userId=" + userId + ", email=" + email + ", password=" + password + ", firstName="
+				+ firstName + ", middleName=" + middleName + ", lastName=" + lastName + ", zip=" + zip + ", pets="
+				+ pets + ", pictures=" + pictures + ", posts=" + posts + ", contacts=" + contacts + ", users=" + users
+				+ "]";
 	}
 
 }

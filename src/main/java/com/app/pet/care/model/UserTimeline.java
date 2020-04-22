@@ -8,6 +8,15 @@ public class UserTimeline {
 	private String postText;
 	private long postId;
 	private LocalDateTime createdAt;
+	private Picture picture;
+
+	public Picture getPicture() {
+		return picture;
+	}
+
+	public void setPicture(Picture picture) {
+		this.picture = picture;
+	}
 
 	public User getUser() {
 		return user;

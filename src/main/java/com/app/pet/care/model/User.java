@@ -9,10 +9,46 @@ public class User {
 	private String password;
 	private Set<Pet> pets;
 	private Set<Post> posts;
+	private Set<Picture> pictures;
+	private Picture profilePic;
 	private String firstName;
 	private String middleName;
 	private String lastName;
 	private String zip;
+	private String profilePicStorageLocation;
+	private byte[] pic;
+
+	public String getProfilePicStorageLocation() {
+		return profilePicStorageLocation;
+	}
+
+	public void setProfilePicStorageLocation(String profilePicStorageLocation) {
+		this.profilePicStorageLocation = profilePicStorageLocation;
+	}
+
+	public byte[] getPic() {
+		return pic;
+	}
+
+	public void setPic(byte[] pic) {
+		this.pic = pic;
+	}
+
+	public Set<Picture> getPictures() {
+		return pictures;
+	}
+
+	public void setPictures(Set<Picture> pictures) {
+		this.pictures = pictures;
+	}
+
+	public Picture getProfilePic() {
+		return profilePic;
+	}
+
+	public void setProfilePic(Picture profilePic) {
+		this.profilePic = profilePic;
+	}
 
 	public String getZip() {
 		return zip;

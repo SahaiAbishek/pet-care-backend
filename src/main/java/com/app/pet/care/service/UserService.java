@@ -1,5 +1,8 @@
 package com.app.pet.care.service;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -11,13 +14,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.app.pet.care.dao.UserRepo;
 import com.app.pet.care.dao.UserTimelineRepo;
 import com.app.pet.care.entity.PetEntity;
+import com.app.pet.care.entity.PictureEntity;
 import com.app.pet.care.entity.PostEntity;
 import com.app.pet.care.entity.UserEntity;
 import com.app.pet.care.model.Pet;
+import com.app.pet.care.model.Picture;
 import com.app.pet.care.model.Post;
 import com.app.pet.care.model.User;
 import com.app.pet.care.model.UserTimeline;
@@ -29,6 +35,8 @@ public class UserService {
 
 	@Autowired
 	private UserRepo userRepo;
+	@Autowired
+	private PictureService picService;
 
 	@Autowired
 	private UserTimelineRepo userTimelineRepo;
@@ -65,27 +73,54 @@ public class UserService {
 			if (userentity.getZip() != null) {
 				target.setZip(userentity.getZip());
 			}
+
+			if (userentity.getPassword() != null) {
+				target.setPassword(userentity.getPassword());
+			}
 			target.setUserId(userentity.getUserId());
 			Set<PetEntity> sourcePets = userentity.getPets();
 			Set<Pet> targetPets = new HashSet<>();
-			for (PetEntity sourcePet : sourcePets) {
-				Pet targetPet = new Pet();
-				if (sourcePet.getBreed() != null) {
-					targetPet.setBreed(sourcePet.getBreed());
+			if (sourcePets != null) {
+				for (PetEntity sourcePet : sourcePets) {
+					Pet targetPet = new Pet();
+					if (sourcePet.getBreed() != null) {
+						targetPet.setBreed(sourcePet.getBreed());
+					}
+					if (sourcePet.getName() != null) {
+						targetPet.setName(sourcePet.getName());
+					}
+					if (sourcePet.getPetType() != null) {
+						targetPet.setPetType(sourcePet.getPetType());
+					}
+					if (sourcePet.getPreferences() != null) {
+						targetPet.setPreferences(sourcePet.getPreferences());
+					}
+					targetPet.setPetId(sourcePet.getPetId());
+					targetPets.add(targetPet);
 				}
-				if (sourcePet.getName() != null) {
-					targetPet.setName(sourcePet.getName());
-				}
-				if (sourcePet.getPetType() != null) {
-					targetPet.setPetType(sourcePet.getPetType());
-				}
-				if (sourcePet.getPreferences() != null) {
-					targetPet.setPreferences(sourcePet.getPreferences());
-				}
-				targetPet.setPetId(sourcePet.getPetId());
-				targetPets.add(targetPet);
 			}
 			target.setPets(targetPets);
+			Set<PictureEntity> picturesEntity = userentity.getPictures();
+			Set<Picture> pictures = new HashSet<>();
+			if (picturesEntity != null && picturesEntity.size() > 0) {
+				for (PictureEntity pictureEntity : picturesEntity) {
+					Picture picture = new Picture();
+					if (pictureEntity.getIsProfilePic() != null && pictureEntity.getIsProfilePic()) {
+						String location = pictureEntity.getStoragelocation();
+						Path path = Paths.get(location);
+						picture.setPicId(pictureEntity.getPicId());
+						picture.setPic(Files.readAllBytes(path));
+						picture.setIsProfilePic(true);
+						target.setProfilePic(picture);
+					} else {
+						String location = pictureEntity.getStoragelocation();
+						Path path = Paths.get(location);
+						picture.setPic(Files.readAllBytes(path));
+						pictures.add(picture);
+					}
+				}
+				target.setPictures(pictures);
+			}
 			return target;
 		} else {
 			throw new Exception("No use found for given id : " + userId);
@@ -152,14 +187,39 @@ public class UserService {
 		return userTimelineRepo.findAllUsers(userId);
 	}
 
-	public boolean addUser(User user) {
+	public boolean addUser(User user, MultipartFile file) throws Exception {
+		if (user.getProfilePic() != null) {
+			Picture picture = user.getProfilePic();
+			picture.setPic(file.getBytes());
+		}
+		return addUser(user);
+	}
+
+	public boolean addUser(User user) throws Exception {
 		UserEntity entity = new UserEntity();
 		BeanUtils.copyProperties(user, entity);
 		UserEntity resp = userRepo.save(entity);
-		if (resp != null) {
-			return true;
+		if (resp == null) {
+			return false;
 		}
-		return false;
+		if (user.getProfilePic() != null) {
+			Picture picture = user.getProfilePic();
+			User picUser = new User();
+			BeanUtils.copyProperties(resp, picUser);
+			picture.setUser(picUser);
+			boolean isPicSaved = false;
+			if (user.getProfilePic().getIsProfilePic()) {
+				isPicSaved = picService.addPicture(resp.getUserId(), new Post(), picture, picture.getPic());
+//				picService.addPicture(picture, picture.getPic());
+			} else {
+				isPicSaved = picService.addPicture(resp.getUserId(), new Post(), picture, picture.getPic());
+//				isPicSaved = picService.updatePicture(picture, picture.getPic());
+				if (!isPicSaved) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	public boolean addFriend(long userId, long contactId) throws Exception {

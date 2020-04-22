@@ -1,6 +1,7 @@
 package com.app.pet.care.entity;
 
 import java.sql.Timestamp;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -10,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -27,6 +29,16 @@ public class PostEntity {
 	private UserEntity user;
 	@Column(name = "CREATED_AT")
 	private Timestamp createdAt;
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+	private Set<PictureEntity> pics;
+
+	public Set<PictureEntity> getPics() {
+		return pics;
+	}
+
+	public void setPics(Set<PictureEntity> pics) {
+		this.pics = pics;
+	}
 
 	public Timestamp getCreatedAt() {
 		return createdAt;
