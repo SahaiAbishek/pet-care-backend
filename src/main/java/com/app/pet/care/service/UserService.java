@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.app.pet.care.dao.UserRepo;
+import com.app.pet.care.dao.UserRepoJdbc;
 import com.app.pet.care.dao.UserTimelineRepo;
 import com.app.pet.care.entity.PetEntity;
 import com.app.pet.care.entity.PictureEntity;
@@ -27,6 +28,7 @@ import com.app.pet.care.model.Picture;
 import com.app.pet.care.model.Post;
 import com.app.pet.care.model.User;
 import com.app.pet.care.model.UserTimeline;
+import com.app.pet.care.utils.PetCareConstants;
 
 @Service
 public class UserService {
@@ -37,9 +39,10 @@ public class UserService {
 	private UserRepo userRepo;
 	@Autowired
 	private PictureService picService;
-
 	@Autowired
 	private UserTimelineRepo userTimelineRepo;
+	@Autowired
+	private UserRepoJdbc userRepoJdbc;
 
 	public long validateUser(String email, String password) throws Exception {
 		UserEntity entity = userRepo.findByEmailAndPassword(email, password);
@@ -77,6 +80,11 @@ public class UserService {
 			if (userentity.getPassword() != null) {
 				target.setPassword(userentity.getPassword());
 			}
+			if (userentity.getProfilePicStorageLocation() != null) {
+				String location = userentity.getProfilePicStorageLocation();
+				Path path = Paths.get(location);
+				target.setPic(Files.readAllBytes(path));
+			}
 			target.setUserId(userentity.getUserId());
 			Set<PetEntity> sourcePets = userentity.getPets();
 			Set<Pet> targetPets = new HashSet<>();
@@ -105,19 +113,10 @@ public class UserService {
 			if (picturesEntity != null && picturesEntity.size() > 0) {
 				for (PictureEntity pictureEntity : picturesEntity) {
 					Picture picture = new Picture();
-					if (pictureEntity.getIsProfilePic() != null && pictureEntity.getIsProfilePic()) {
-						String location = pictureEntity.getStoragelocation();
-						Path path = Paths.get(location);
-						picture.setPicId(pictureEntity.getPicId());
-						picture.setPic(Files.readAllBytes(path));
-						picture.setIsProfilePic(true);
-						target.setProfilePic(picture);
-					} else {
-						String location = pictureEntity.getStoragelocation();
-						Path path = Paths.get(location);
-						picture.setPic(Files.readAllBytes(path));
-						pictures.add(picture);
-					}
+					String location = pictureEntity.getStoragelocation();
+					Path path = Paths.get(location);
+					picture.setPic(Files.readAllBytes(path));
+					pictures.add(picture);
 				}
 				target.setPictures(pictures);
 			}
@@ -195,6 +194,23 @@ public class UserService {
 		return addUser(user);
 	}
 
+	public boolean updateUser(User user) throws Exception {
+		UserEntity userEntity = new UserEntity();
+		boolean saveUser = true;
+		if (user.getProfilePic() != null) {
+			saveUser = picService.addProfilePicture(user.getUserId(), new Post(), user.getProfilePic(),
+					user.getProfilePic().getPic());
+			//EMAIL should be made a Mandatory field in UI
+			String directoryName = PetCareConstants.MY_BUCKET + "\\" + userEntity.getEmail();
+			user.setProfilePicStorageLocation(directoryName);
+		}
+		if (saveUser) {
+			BeanUtils.copyProperties(user, userEntity);
+			return userRepoJdbc.updateUser(userEntity) > 0;
+		}
+		return false;
+	}
+
 	public boolean addUser(User user) throws Exception {
 		UserEntity entity = new UserEntity();
 		BeanUtils.copyProperties(user, entity);
@@ -209,11 +225,9 @@ public class UserService {
 			picture.setUser(picUser);
 			boolean isPicSaved = false;
 			if (user.getProfilePic().getIsProfilePic()) {
-				isPicSaved = picService.addPicture(resp.getUserId(), new Post(), picture, picture.getPic());
-//				picService.addPicture(picture, picture.getPic());
+				isPicSaved = picService.addProfilePicture(resp.getUserId(), new Post(), picture, picture.getPic());
 			} else {
 				isPicSaved = picService.addPicture(resp.getUserId(), new Post(), picture, picture.getPic());
-//				isPicSaved = picService.updatePicture(picture, picture.getPic());
 				if (!isPicSaved) {
 					return false;
 				}

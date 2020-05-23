@@ -128,21 +128,23 @@ public class UserController {
 		User user = new User();
 		user.setUserId(userId);
 		user.setEmail(email);
-		user.setPassword("test123");
+		// user.setPassword("test123");
 		user.setFirstName(firstName);
 		user.setLastName(lastName);
 		user.setMiddleName(middleName);
 		user.setZip(zip);
-		Picture picture = new Picture();
-		if (picId != -1)
-			picture.setPicId(picId);
-		picture.setName(file.getOriginalFilename());
-		picture.setPic(file.getBytes());
-		picture.setPicSize(file.getSize());
-		picture.setPicType(file.getContentType());
-		picture.setIsProfilePic(isProfilePic);
-		user.setProfilePic(picture);
-		if (userService.addUser(user)) {
+		if (file != null) {
+			Picture picture = new Picture();
+			if (picId != -1)
+				picture.setPicId(picId);
+			picture.setName(file.getOriginalFilename());
+			picture.setPic(file.getBytes());
+			picture.setPicSize(file.getSize());
+			picture.setPicType(file.getContentType());
+			picture.setIsProfilePic(isProfilePic);
+			user.setProfilePic(picture);
+		}
+		if (userService.updateUser(user)) {
 			log.debug("Add user successful");
 			return new ResponseEntity<String>("Success", HttpStatus.OK);
 		}

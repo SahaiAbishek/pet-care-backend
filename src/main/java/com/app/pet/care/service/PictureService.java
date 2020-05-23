@@ -20,6 +20,7 @@ import com.app.pet.care.entity.PictureEntity;
 import com.app.pet.care.entity.UserEntity;
 import com.app.pet.care.model.Picture;
 import com.app.pet.care.model.Post;
+import com.app.pet.care.utils.PetCareConstants;
 
 @Service
 public class PictureService {
@@ -35,7 +36,28 @@ public class PictureService {
 	@Autowired
 	private PostService postService;
 
-	private static String MY_BUCKET = "C:\\abhi\\personal\\petcare";
+	private static String MY_BUCKET = PetCareConstants.MY_BUCKET;
+
+	public boolean addProfilePicture(Long userId, Post post, Picture picture, byte[] bytes) throws Exception {
+		long postId = postService.addPost(post, userId);
+		Optional<UserEntity> optionalUserEntity = userRepo.findById(userId);
+		UserEntity userEntity = optionalUserEntity.get();
+		if (userEntity != null) {
+			String storeageLocation = userEntity.getEmail();
+			String directoryName = MY_BUCKET + "\\" + storeageLocation;
+			File directory = new File(directoryName);
+			if (!directory.exists()) {
+				directory.mkdir();
+			}
+			Path path = Paths.get(MY_BUCKET + "\\" + storeageLocation + "\\" + picture.getName());
+			userEntity.setProfilePicStorageLocation(MY_BUCKET + "\\" + storeageLocation + "\\" + picture.getName());
+			picture.setPostId(postId);
+			Files.write(path, bytes);
+			int val = picRepoJdbc.savePostReply(userId, picture);
+			return val > 0;
+		}
+		return false;
+	}
 
 	public boolean addPicture(Long userId, Post post, Picture picture, byte[] bytes) throws Exception {
 		long postId = postService.addPost(post, userId);

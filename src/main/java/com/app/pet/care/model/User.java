@@ -2,6 +2,8 @@ package com.app.pet.care.model;
 
 import java.util.Set;
 
+import com.app.pet.care.entity.UserEntity;
+
 public class User {
 
 	private long userId;
@@ -17,6 +19,15 @@ public class User {
 	private String zip;
 	private String profilePicStorageLocation;
 	private byte[] pic;
+	private Set<UserEntity> contacts;
+
+	public Set<UserEntity> getContacts() {
+		return contacts;
+	}
+
+	public void setContacts(Set<UserEntity> contacts) {
+		this.contacts = contacts;
+	}
 
 	public String getProfilePicStorageLocation() {
 		return profilePicStorageLocation;
