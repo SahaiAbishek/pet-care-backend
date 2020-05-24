@@ -48,6 +48,7 @@ public class TimelineRowMapper implements RowMapper<UserTimeline> {
 			}
 		}
 		picture.setName(rs.getString("NAME"));
+		timeline.setPostComment(rs.getString("COMMENT"));
 		timeline.setPicture(picture);
 		return timeline;
 	}
