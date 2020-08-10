@@ -38,7 +38,6 @@ public class UserTimelineRepo {
 
 	@Transactional
 	public List<UserTimeline> findAllUsers(long userId) {
-
 		List<UserTimeline> userTimeline = jdbcTemplate.query(timeLineSql, new Object[] { userId }, new TimelineRowMapper());
 		return userTimeline;
 	}
