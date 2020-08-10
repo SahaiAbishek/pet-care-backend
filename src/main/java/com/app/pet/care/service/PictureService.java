@@ -52,6 +52,7 @@ public class PictureService {
 			Path path = Paths.get(MY_BUCKET + "\\" + storeageLocation + "\\" + picture.getName());
 			userEntity.setProfilePicStorageLocation(MY_BUCKET + "\\" + storeageLocation + "\\" + picture.getName());
 			picture.setPostId(postId);
+			picture.setStoragelocation(MY_BUCKET + "\\" + storeageLocation + "\\" + picture.getName());
 			Files.write(path, bytes);
 			int val = picRepoJdbc.savePostReply(userId, picture);
 			return val > 0;

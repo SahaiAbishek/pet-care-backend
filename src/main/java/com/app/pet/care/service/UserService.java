@@ -80,7 +80,7 @@ public class UserService {
 			if (userentity.getPassword() != null) {
 				target.setPassword(userentity.getPassword());
 			}
-			if (userentity.getProfilePicStorageLocation() != null) {
+			if (userentity.getProfilePicStorageLocation() != null && !userentity.getProfilePicStorageLocation().trim().isEmpty()) {
 				String location = userentity.getProfilePicStorageLocation();
 				Path path = Paths.get(location);
 				target.setPic(Files.readAllBytes(path));
@@ -194,17 +194,17 @@ public class UserService {
 		return addUser(user);
 	}
 
-	public boolean updateUser(User user) throws Exception {
-		UserEntity userEntity = new UserEntity();
+	public boolean updateUser(User user) throws Exception {	
 		boolean saveUser = true;
 		if (user.getProfilePic() != null) {
 			saveUser = picService.addProfilePicture(user.getUserId(), new Post(), user.getProfilePic(),
 					user.getProfilePic().getPic());
 			//EMAIL should be made a Mandatory field in UI
-			String directoryName = PetCareConstants.MY_BUCKET + "\\" + userEntity.getEmail();
+			String directoryName = PetCareConstants.MY_BUCKET + "\\" + user.getEmail()+ "\\" + user.getProfilePic().getName();
 			user.setProfilePicStorageLocation(directoryName);
 		}
 		if (saveUser) {
+			UserEntity userEntity = new UserEntity();
 			BeanUtils.copyProperties(user, userEntity);
 			return userRepoJdbc.updateUser(userEntity) > 0;
 		}
